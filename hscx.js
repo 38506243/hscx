@@ -1,12 +1,13 @@
 /*
 核酸查询
-Version:1.0.0
+Version:1.1.0
 
-重写设置：
+Rewrite：
 ^https://jshscx.jsehealth.com:8002/app-backend/rna/queryRnaReport url script-response-body https://raw.githubusercontent.com/38506243/hscx/main/hscx.js
 ^https://jsstm.jszwfw.gov.cn/healthCode/queryHs url script-response-body https://raw.githubusercontent.com/38506243/hscx/main/hscx.js
+^https://jsstm.jszwfw.gov.cn/healthCode/queryLatestHs url script-response-body https://raw.githubusercontent.com/38506243/hscx/main/hscx.js
 
-MITM:jshscx.jsehealth.com
+MITM:jshscx.jsehealth.com,jsstm.jszwfw.gov.cn
 
 */
 
@@ -85,6 +86,28 @@ try {
                     currentTime: 1651201261
                 }
             }
+            $.log("重组Body完成");
+            $.done({ body: JSON.stringify(body) });
+        }
+        if ($request.url.indexOf("healthCode/queryLatestHs") > -1) {
+            Init();
+            let cookie = JSON.parse($.read(cookieName));
+            var body = {
+                res: {
+                    currentTime: 1651204154, 
+                    hs: {
+                        area: cookie.area, 
+                        collectTime: getCollectTime(cookie.collectTime), 
+                        collectUnit: cookie.collectUnit,
+                        collectCity: cookie.collectCity, 
+                        checkResult: cookie.checkResult, 
+                        checkUnit: cookie.checkUnit
+                    }
+                }, 
+                resMessage: "OK", 
+                resCode: 0
+            }
+            $.log("重组Body完成");
             $.done({ body: JSON.stringify(body) });
         }
     }

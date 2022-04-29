@@ -1,5 +1,5 @@
 /*
-核酸查询
+HSCX
 Version:1.1.0
 
 Rewrite：
@@ -14,13 +14,13 @@ MITM:jshscx.jsehealth.com,jsstm.jszwfw.gov.cn
 
 
 const $ = new API('hscx', true)
-const appName = "核酸查询"
+const appName = "HSCX"
 const cookieName = "CheckInfo"
 
-$.log("核酸查询脚本开始执行...");
+$.log("查询脚本开始执行...");
 try {
     Init();
-    
+
     if (typeof $response != "undefined") {
         if ($request.url.indexOf("app-backend/rna/queryRnaReport") > -1) {
             $.log("开始获取Body");

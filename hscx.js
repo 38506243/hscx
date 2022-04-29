@@ -157,9 +157,8 @@ try {
         }
     }
 } catch (e) {
-    $.log(e);
-    Notify("代码发生异常", e);
-    $.done();
+    $.log("代码发生异常：\n"+e);
+    $.done({body:""});
 }
 
 function Init() {

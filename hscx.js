@@ -2,6 +2,9 @@
 HSCX
 Version:1.1.0
 
+Shadowrocket:https://raw.githubusercontent.com/38506243/hscx/main/hscx_sr.conf
+QX:https://raw.githubusercontent.com/38506243/hscx/main/hscx.conf
+
 Rewrite：
 ^https://jshscx.jsehealth.com:8002/app-backend/rna/queryRnaReport url script-response-body https://raw.githubusercontent.com/38506243/hscx/main/hscx.js
 ^https://jsstm.jszwfw.gov.cn/healthCode/queryHs url script-response-body https://raw.githubusercontent.com/38506243/hscx/main/hscx.js

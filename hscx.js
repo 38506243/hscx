@@ -6,6 +6,7 @@ Rewrite：
 ^https://jshscx.jsehealth.com:8002/app-backend/rna/queryRnaReport url script-response-body https://raw.githubusercontent.com/38506243/hscx/main/hscx.js
 ^https://jsstm.jszwfw.gov.cn/healthCode/queryHs url script-response-body https://raw.githubusercontent.com/38506243/hscx/main/hscx.js
 ^https://jsstm.jszwfw.gov.cn/healthCode/queryLatestHs url script-response-body https://raw.githubusercontent.com/38506243/hscx/main/hscx.js
+^https://jsstm.jszwfw.gov.cn/jkm/2/queryHskt url script-response-body https://raw.githubusercontent.com/38506243/hscx/main/hscx.js
 
 MITM:jshscx.jsehealth.com,jsstm.jszwfw.gov.cn
 
@@ -18,62 +19,58 @@ const cookieName = "CheckInfo"
 
 $.log("核酸查询脚本开始执行...");
 try {
+    Init();
+    
     if (typeof $response != "undefined") {
         if ($request.url.indexOf("app-backend/rna/queryRnaReport") > -1) {
-            Init();
             $.log("开始获取Body");
             let data = JSON.parse($response.body);
-            if (data.status != 1) {
-                $.log("查询失败");
-            }
-            else {
-                let cookie = $.read(cookieName);
-                let jsonData = JSON.parse(cookie);
-                let list = [];
-                jsonData.forEach(item => {
-                    if (item.valid == 1) {
-                        list.push({
-                            cardNo: item.cardNo,
-                            checkTime: null,
-                            area: item.area,
-                            id: null,
-                            collectTime: getCollectTime(item.collectTime),
-                            checkResult: item.checkResult,
-                            collectCity: item.collectCity,
-                            timeFlag: getTimeFlag(),
-                            checkUnit: item.checkUnit,
-                            name: item.name,
-                            collectUnit: item.collectUnit
-                        });
-                    }
-                })
-
-                data.data.reportList.forEach(item => {
+            let cookie = JSON.parse($.read(cookieName));
+            let list = [];
+            cookie.forEach(item => {
+                if (item.valid == 1) {
                     list.push({
                         cardNo: item.cardNo,
                         checkTime: null,
                         area: item.area,
                         id: null,
-                        collectTime: item.collectTime,
+                        collectTime: getCollectTime(item.collectTime),
                         checkResult: item.checkResult,
                         collectCity: item.collectCity,
-                        timeFlag: item.timeFlag,
+                        timeFlag: getTimeFlag(),
                         checkUnit: item.checkUnit,
                         name: item.name,
                         collectUnit: item.collectUnit
                     });
+                }
+            })
+
+            data.data.reportList.forEach(item => {
+                list.push({
+                    cardNo: item.cardNo,
+                    checkTime: null,
+                    area: item.area,
+                    id: null,
+                    collectTime: item.collectTime,
+                    checkResult: item.checkResult,
+                    collectCity: item.collectCity,
+                    timeFlag: item.timeFlag,
+                    checkUnit: item.checkUnit,
+                    name: item.name,
+                    collectUnit: item.collectUnit
                 });
-                data.data.reportList = list;
-                $.log("Body已重组完成");
-            }
+            });
+            data.data.reportList = list;
+            $.log("Body已重组完成");
             $.done({ body: JSON.stringify(data) });
         }
+
         if ($request.url.indexOf("healthCode/queryHs") > -1) {
-            Init();
-            let body={};
+            let data = JSON.parse($response.body);
+            let body = {};
             let cookie = JSON.parse($.read(cookieName));
-            cookie.forEach(item=>{
-                if(item.valid==1){
+            cookie.forEach(item => {
+                if (item.valid == 1) {
                     body = {
                         resMessage: "OK",
                         resCode: 0,
@@ -86,34 +83,70 @@ try {
                                 checkResult: item.checkResult,
                                 checkUnit: item.checkUnit
                             },
-                            currentTime: 1651201261
+                            currentTime: data.res.currentTime
                         }
                     }
                 }
             });
-            
+
             $.log("重组Body完成");
             $.done({ body: JSON.stringify(body) });
         }
+
         if ($request.url.indexOf("healthCode/queryLatestHs") > -1) {
-            Init();
-            let body={};
+            let data = JSON.parse($response.body);
+            let body = {};
             let cookie = JSON.parse($.read(cookieName));
-            cookie.forEach(item=>{
-                body = {
-                    res: {
-                        currentTime: 1651204154, 
-                        hs: {
-                            area: item.area, 
-                            collectTime: getCollectTime(item.collectTime), 
-                            collectUnit: item.collectUnit,
-                            collectCity: item.collectCity, 
-                            checkResult: item.checkResult, 
-                            checkUnit: item.checkUnit
-                        }
-                    }, 
-                    resMessage: "OK", 
-                    resCode: 0
+            cookie.forEach(item => {
+                if (item.valid == 1) {
+                    body = {
+                        res: {
+                            currentTime: data.res.currentTime,
+                            hs: {
+                                area: item.area,
+                                collectTime: getCollectTime(item.collectTime),
+                                collectUnit: item.collectUnit,
+                                collectCity: item.collectCity,
+                                checkResult: item.checkResult,
+                                checkUnit: item.checkUnit
+                            }
+                        },
+                        resMessage: "OK",
+                        resCode: 0
+                    }
+                }
+            })
+            $.log("重组Body完成");
+            $.done({ body: JSON.stringify(body) });
+        }
+
+        if ($request.url.indexOf("jkm/2/queryHskt") > -1) {
+            let data = JSON.parse($response.body);
+            let body = {};
+            let cookie = JSON.parse($.read(cookieName));
+            cookie.forEach(item => {
+                if (item.valid == 1) {
+                    body = {
+                        res: {
+                            currentTime: data.res.currentTime,
+                            kt: {
+                                msg: data.res.kt.msg,
+                                data: data.res.kt.data,
+                                status: data.res.kt.status
+                            },
+                            hs: {
+                                msg: "查询成功",
+                                data: {
+                                    hsjcsj: getCollectTime(item.collectTime),
+                                    hsjcjgmc: item.checkUnit,
+                                    hsjcjg: item.checkResult
+                                },
+                                status: "0"
+                            }
+                        },
+                        resMessage: "OK",
+                        resCode: 0
+                    };
                 }
             })
             $.log("重组Body完成");

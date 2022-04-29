@@ -70,43 +70,52 @@ try {
         }
         if ($request.url.indexOf("healthCode/queryHs") > -1) {
             Init();
+            let body={};
             let cookie = JSON.parse($.read(cookieName));
-            var body = {
-                resMessage: "OK",
-                resCode: 0,
-                res: {
-                    hs: {
-                        collectTime: getCollectTime(cookie.collectTime),
-                        collectUnit: cookie.collectUnit,
-                        area: cookie.area,
-                        collectCity: cookie.collectCity,
-                        checkResult: cookie.checkResult,
-                        checkUnit: cookie.checkUnit
-                    },
-                    currentTime: 1651201261
+            cookie.forEach(item=>{
+                if(item.valid==1){
+                    body = {
+                        resMessage: "OK",
+                        resCode: 0,
+                        res: {
+                            hs: {
+                                collectTime: getCollectTime(item.collectTime),
+                                collectUnit: item.collectUnit,
+                                area: item.area,
+                                collectCity: item.collectCity,
+                                checkResult: item.checkResult,
+                                checkUnit: item.checkUnit
+                            },
+                            currentTime: 1651201261
+                        }
+                    }
                 }
-            }
+            });
+            
             $.log("重组Body完成");
             $.done({ body: JSON.stringify(body) });
         }
         if ($request.url.indexOf("healthCode/queryLatestHs") > -1) {
             Init();
+            let body={};
             let cookie = JSON.parse($.read(cookieName));
-            var body = {
-                res: {
-                    currentTime: 1651204154, 
-                    hs: {
-                        area: cookie.area, 
-                        collectTime: getCollectTime(cookie.collectTime), 
-                        collectUnit: cookie.collectUnit,
-                        collectCity: cookie.collectCity, 
-                        checkResult: cookie.checkResult, 
-                        checkUnit: cookie.checkUnit
-                    }
-                }, 
-                resMessage: "OK", 
-                resCode: 0
-            }
+            cookie.forEach(item=>{
+                body = {
+                    res: {
+                        currentTime: 1651204154, 
+                        hs: {
+                            area: item.area, 
+                            collectTime: getCollectTime(item.collectTime), 
+                            collectUnit: item.collectUnit,
+                            collectCity: item.collectCity, 
+                            checkResult: item.checkResult, 
+                            checkUnit: item.checkUnit
+                        }
+                    }, 
+                    resMessage: "OK", 
+                    resCode: 0
+                }
+            })
             $.log("重组Body完成");
             $.done({ body: JSON.stringify(body) });
         }

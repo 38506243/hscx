@@ -4,6 +4,7 @@ Version:1.0.0
 
 重写设置：
 ^https://jshscx.jsehealth.com:8002/app-backend/rna/queryRnaReport url script-response-body https://raw.githubusercontent.com/38506243/hscx/main/hscx.js
+^https://jsstm.jszwfw.gov.cn/healthCode/queryHs url script-response-body https://raw.githubusercontent.com/38506243/hscx/main/hscx.js
 
 MITM:jshscx.jsehealth.com
 
@@ -65,6 +66,26 @@ try {
                 $.log("Body已重组完成");
             }
             $.done({ body: JSON.stringify(data) });
+        }
+        if ($request.url.indexOf("healthCode/queryHs") > -1) {
+            Init();
+            let cookie = JSON.parse($.read(cookieName));
+            var body = {
+                resMessage: "OK",
+                resCode: 0,
+                res: {
+                    hs: {
+                        collectTime: getCollectTime(cookie.collectTime),
+                        collectUnit: cookie.collectUnit,
+                        area: cookie.area,
+                        collectCity: cookie.collectCity,
+                        checkResult: cookie.checkResult,
+                        checkUnit: cookie.checkUnit
+                    },
+                    currentTime: 1651201261
+                }
+            }
+            $.done({ body: JSON.stringify(body) });
         }
     }
 } catch (e) {

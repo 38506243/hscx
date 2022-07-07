@@ -188,6 +188,9 @@ function Init() {
 }
 
 function getCollectTime(time) {
+    if(time.length>5){
+        return time;
+    }
     let yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
     let year = yesterday.getFullYear();
     let month = yesterday.getMonth() + 1;
